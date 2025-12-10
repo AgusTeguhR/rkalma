@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header, { HEADER_HEIGHT } from "../components/Header";
 import { wiridList } from "../data/wiridList";
 import { useNavigate } from "react-router-dom";
