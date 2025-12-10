@@ -3,4 +3,13 @@ export const doaList = [
   { name: "Doa Arwah" },
   { name: "Doa Haul"},
   { name: "Doa Shalat Dhuha"},
+  { name: "Doa Tarawih"},
+  { name: "Doa Sholat Witir" },
+  { name: "Doa Sholat Hajat"},
+  { name: "Doa Selamat"},
+  { name: "Doa Tolak Bala"},
+  { name: "Doa Setelah Akad" },
+  { name: "Doa Tasmiyah"},
+  { name: "Talqin Mayyit Laki-laki"},
+  { name: "Talqin Mayyit Perempuan"},
 ];
