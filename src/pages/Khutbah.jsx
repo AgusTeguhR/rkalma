@@ -20,7 +20,7 @@ const Khutbah = () => {
       style={{
         width: "100%",
         margin: "0 auto",
-        paddingTop: 0,
+        paddingTop: HEADER_HEIGHT,
         height: `calc(100vh - ${headerPx})`,
         boxSizing: "border-box", // <= penting
         overflowY: "auto",
