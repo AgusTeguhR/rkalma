@@ -11,15 +11,17 @@ const Khutbah = () => {
     k.name.toLowerCase().includes(keyword.toLowerCase())
   );
 
+  const headerPx =
+  typeof HEADER_HEIGHT === "number" ? `${HEADER_HEIGHT}px` : HEADER_HEIGHT;
+
   return (
     <div
       className="app-container"
       style={{
         width: "100%",
-        maxWidth: "420px",
         margin: "0 auto",
-        paddingTop: HEADER_HEIGHT,
-        height: "100vh",
+        paddingTop: 0,
+        height: `calc(100vh - ${headerPx})`,
         boxSizing: "border-box", // <= penting
         overflowY: "auto",
         overflowX: "hidden",
