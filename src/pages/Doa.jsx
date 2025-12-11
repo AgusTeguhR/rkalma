@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header, { HEADER_HEIGHT } from "../components/Header";
-import { doaList } from "../data/DoaList";
+import { doaList } from "../data/do'aList";
 import { useNavigate } from "react-router-dom";
 
 const Doa = () => {
