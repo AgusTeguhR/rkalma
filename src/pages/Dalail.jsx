@@ -19,6 +19,7 @@ const Dalail = () => {
         maxWidth: "420px",
         margin: "0 auto",
         paddingTop: HEADER_HEIGHT,
+        paddingBottom: HEADER_HEIGHT,
         height: "100vh",
         overflowY: "auto",
         overflowX: "hidden",
