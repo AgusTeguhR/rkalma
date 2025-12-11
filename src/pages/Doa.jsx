@@ -62,9 +62,10 @@ const Doa = () => {
             {/* Area Arab tetap ada, tetapi kosong */}
             <div
               style={{
-                fontSize: "12px",
-                color: "#666",
-                minHeight: "16px", // menjaga tinggi supaya konsisten
+                fontSize: "15px",
+                fontWeight: 600,
+                marginBottom: "2px",
+                color: "#222",
               }}
             >
               {d.arab || ""}

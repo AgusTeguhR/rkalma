@@ -61,9 +61,10 @@ const Dalail = () => {
 
             <div
               style={{
-                fontSize: "12px",
-                color: "#666",
-                minHeight: "16px",
+                fontSize: "15px",
+                fontWeight: 600,
+                marginBottom: "2px",
+                color: "#222",
               }}
             >
               {d.info || ""}
