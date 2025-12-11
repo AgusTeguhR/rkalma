@@ -18,10 +18,8 @@ const Wirid = () => {
       className="app-container"
       style={{
         width: "100%",
-        maxWidth: "420px",
         margin: "0 auto",
         paddingTop: HEADER_HEIGHT,
-        paddingBottom: HEADER_HEIGHT,
         height: "100vh",
         overflowY: "auto",
         overflowX: "hidden",
@@ -60,7 +58,6 @@ const Wirid = () => {
             >
               {s.name}
             </div>
-            <div style={{ fontSize: "12px", color: "#666" }}>{s.arab}</div>
           </li>
         ))}
       </ul>

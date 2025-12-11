@@ -16,7 +16,6 @@ const Dalail = () => {
       className="app-container"
       style={{
         width: "100%",
-        maxWidth: "420px",
         margin: "0 auto",
         paddingTop: HEADER_HEIGHT,
         paddingBottom: HEADER_HEIGHT,
@@ -59,16 +58,6 @@ const Dalail = () => {
               {d.name}
             </div>
 
-            <div
-              style={{
-                fontSize: "15px",
-                fontWeight: 600,
-                marginBottom: "2px",
-                color: "#222",
-              }}
-            >
-              {d.info || ""}
-            </div>
           </li>
         ))}
       </ul>

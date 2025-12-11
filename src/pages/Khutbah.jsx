@@ -60,17 +60,6 @@ const Khutbah = () => {
             >
               {k.name}
             </div>
-
-            <div
-              style={{
-                fontSize: "15px",
-                fontWeight: 600,
-                marginBottom: "2px",
-                color: "#222",
-              }}
-            >
-              {k.info || ""}
-            </div>
           </li>
         ))}
       </ul>

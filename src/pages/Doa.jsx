@@ -60,18 +60,6 @@ const Doa = () => {
             >
               {d.name}
             </div>
-
-            {/* Area Arab tetap ada, tetapi kosong */}
-            <div
-              style={{
-                fontSize: "15px",
-                fontWeight: 600,
-                marginBottom: "2px",
-                color: "#222",
-              }}
-            >
-              {d.arab || ""}
-            </div>
           </li>
         ))}
       </ul>

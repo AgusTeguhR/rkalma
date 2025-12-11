@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header, { HEADER_HEIGHT} from "../components/Header";
+import Header, { HEADER_HEIGHT } from "../components/Header";
 import { surahList } from "../data/surahList";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +18,6 @@ const Surah = () => {
       className="app-container"
       style={{
         width: "100%",
-        maxWidth: "420px",
         margin: "0 auto",
         paddingTop: HEADER_HEIGHT,
         paddingBottom: HEADER_HEIGHT,
@@ -41,6 +40,10 @@ const Surah = () => {
               boxShadow: "0 1px 4px rgba(0, 0, 0, 0.08)",
               transition: "all 0.2s ease",
               cursor: "pointer",
+
+              display: "flex", // ← bikin horizontal
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
             onClick={() =>
               navigate(
@@ -50,18 +53,29 @@ const Surah = () => {
               )
             }
           >
+            {/* Nama Surah (kiri) */}
             <div
               style={{
                 fontSize: "15px",
                 fontWeight: 600,
-                marginBottom: "2px",
                 color: "#222",
               }}
             >
               {s.name}
             </div>
 
-            <div style={{ fontSize: "12px", color: "#666" }}>{s.arab}</div>
+            {/* Arab (kanan) */}
+            <div
+              style={{
+                fontSize: "16px",
+                color: "#444",
+                fontWeight: "500",
+                marginLeft: "10px",
+                direction: "rtl",
+              }}
+            >
+              {s.arab}
+            </div>
           </li>
         ))}
       </ul>
