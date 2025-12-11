@@ -89,6 +89,7 @@ const Home = () => {
                 overflow: "hidden",
                 transform: activeIndex === index ? "scale(1.05)" : "scale(1)",
                 transition: "transform 0.15s ease-out",
+                
               }}
             >
               <img
@@ -98,6 +99,7 @@ const Home = () => {
                   height: "83%",
                   objectFit: "fill",
                   borderRadius: "18%",
+                  filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.35))", 
                 }}
               />
             </div>
