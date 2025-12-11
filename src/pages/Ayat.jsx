@@ -213,6 +213,9 @@ const Ayat = () => {
   const safeId = encodeURIComponent(id || "");
   const fileUrl = `/${safeFolder}/${safeId}.pdf`;
 
+  const headerPx =
+    typeof HEADER_HEIGHT === "number" ? `${HEADER_HEIGHT}px` : HEADER_HEIGHT;
+
   return (
     <div
       className="pdf-zoom-target"
@@ -220,7 +223,7 @@ const Ayat = () => {
         width: "100%",
         margin: "0 auto",
         paddingTop: HEADER_HEIGHT,
-        height: "100vh",
+        height: `calc(100vh - ${headerPx})`,
         display: "flex",
         flexDirection: "column",
         background: "#fff",
