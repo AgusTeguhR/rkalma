@@ -152,7 +152,7 @@ const Index = () => {
           style={{
             width: "100%",
             height: "100%",
-            backgroundImage: "url(/images/splash.png)",
+            backgroundImage: "url(/images/splash.webp)",
             backgroundSize: "100% 100%",
             backgroundRepeat: "no-repeat",
             backgroundColor: "#fff", // Background sementara saat loading
