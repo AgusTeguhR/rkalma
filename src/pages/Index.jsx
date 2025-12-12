@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [splashLoaded, setSplashLoaded] = useState(false);
   const [splashRendered, setSplashRendered] = useState(false);
   const [progress, setProgress] = useState(0);
   const [homeReady, setHomeReady] = useState(false);
@@ -17,30 +18,27 @@ const Index = () => {
     setVH();
     window.addEventListener("resize", setVH);
 
-    // Step 1: Preload gambar splash (boleh lambat, tidak masalah)
+    // Step 1: Preload gambar splash
     const splashImg = new Image();
     splashImg.src = "/images/splash.webp";
 
     splashImg.onload = () => {
-      console.log("Splash image loaded, waiting for full render...");
+      setSplashLoaded(true);
 
-      // Tunggu lebih lama untuk memastikan splash benar-benar tampil sempurna di layar
-      // Baru mulai loading home assets setelah splash 100% visible
+      // Tunggu gambar benar-benar ter-render di browser
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setTimeout(() => {
-            console.log(
-              "Splash fully rendered, starting home assets loading..."
-            );
             setSplashRendered(true);
-          }, 800); // Tunggu 800ms untuk memastikan image benar-benar penuh di layar
+          }, 400); // 300ms transition + 100ms buffer
         });
       });
     };
 
     splashImg.onerror = () => {
       console.error("Splash image failed to load");
-      setTimeout(() => setSplashRendered(true), 200);
+      setSplashLoaded(true);
+      setTimeout(() => setSplashRendered(true), 100);
     };
 
     return () => {
@@ -48,7 +46,7 @@ const Index = () => {
     };
   }, []);
 
-  // Step 2: Preload SEMUA aset home HANYA setelah splash BENAR-BENAR tampil
+  // Step 2: Preload SEMUA aset home setelah splash rendered
   useEffect(() => {
     if (!splashRendered) return;
 
@@ -73,9 +71,7 @@ const Index = () => {
       let loadedCount = 0;
       const totalAssets = homeAssets.length;
 
-      console.log(
-        `✅ Splash fully visible! Starting home assets preload (${totalAssets} items)...`
-      );
+      console.log(`Starting to preload ${totalAssets} assets...`);
 
       // Load setiap aset dan track progressnya secara REAL
       homeAssets.forEach((src) => {
@@ -92,11 +88,9 @@ const Index = () => {
             console.warn(`✗ Failed (${loadedCount}/${totalAssets}): ${src}`);
           }
 
-          // Jika semua aset sudah diproses (loaded atau error)
           if (loadedCount === totalAssets) {
             console.log("All assets processed!");
 
-            // Tunggu sebentar untuk memastikan browser sudah render semua
             setTimeout(() => {
               setHomeReady(true);
             }, 500);
@@ -104,9 +98,7 @@ const Index = () => {
         };
 
         img.onload = () => handleLoad(true);
-        img.onerror = () => {
-          handleLoad(false);
-        };
+        img.onerror = () => handleLoad(false);
 
         img.src = src;
       });
@@ -128,65 +120,74 @@ const Index = () => {
   }, [homeReady, navigate]);
 
   return (
-    <>
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-        `}
-      </style>
+    <div
+      className="app-container"
+      style={{
+        width: "100vw",
+        height: "calc(var(--vh, 1vh) * 100)",
+        position: "relative",
+        overflow: "hidden",
+        backgroundColor: "#fff",
+      }}
+    >
+      {/* Splash Background */}
       <div
-        className="app-container"
         style={{
-          width: "100vw",
-          height: "calc(var(--vh, 1vh) * 100)",
-          position: "relative",
-          overflow: "hidden",
-          backgroundColor: "#fff",
+          width: "100%",
+          height: "100%",
+          backgroundImage: splashLoaded ? "url(/images/splash.webp)" : "none",
+          backgroundSize: "100% 100%",
+          backgroundRepeat: "no-repeat",
+          opacity: splashLoaded ? 1 : 0,
+          transition: "opacity 0.3s ease-in",
         }}
-      >
-        {/* Splash Background - Tampil bertahap secara natural */}
+      />
+
+      {/* Loading Top Bar */}
+      {splashRendered && (
         <div
           style={{
-            width: "100%",
-            height: "100%",
-            backgroundImage: "url(/images/splash.webp)",
-            backgroundSize: "100% 100%",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: "#fff", // Background sementara saat loading
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "3px",
+            backgroundColor: "rgba(255, 255, 255, 0.3)",
+            overflow: "hidden",
+            zIndex: 1000,
           }}
-        />
-
-        {/* Loading Top Bar - HANYA muncul setelah splash tampil penuh */}
-        {splashRendered && (
+        >
           <div
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "3px",
-              backgroundColor: "rgba(255, 255, 255, 0.3)",
-              overflow: "hidden",
-              zIndex: 1000,
-              animation: "fadeIn 0.3s ease-in",
+              height: "100%",
+              width: `${progress}%`,
+              backgroundColor: "#4CAF50",
+              transition: "width 0.3s ease-out",
+              boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
             }}
-          >
-            <div
-              style={{
-                height: "100%",
-                width: `${progress}%`,
-                backgroundColor: "#4CAF50",
-                transition: "width 0.3s ease-out",
-                boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
-              }}
-            />
-          </div>
-        )}
-      </div>
-    </>
+          />
+        </div>
+      )}
+
+      {/* Progress percentage */}
+      {splashRendered && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "40px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            color: "#333",
+            fontSize: "0.9rem",
+            fontWeight: "600",
+            zIndex: 999,
+            textShadow: "0 1px 3px rgba(255,255,255,0.8)",
+          }}
+        >
+          {Math.round(progress)}%
+        </div>
+      )}
+    </div>
   );
 };
 
