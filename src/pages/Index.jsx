@@ -39,29 +39,28 @@ const Index = () => {
       setTimeout(() => setSplashRendered(true), 100);
     };
 
-    return () => {
-      window.removeEventListener("resize", setVH);
-    };
+    return () => window.removeEventListener("resize", setVH);
   }, []);
 
+  // ========== DELAY 1 DETIK SEBELUM LOADING MULAI ==========
   useEffect(() => {
     if (!splashRendered) return;
 
+    const homeAssets = [
+      "/images/backgroundmain.png",
+
+      "/images/surah.png",
+      "/images/wirid.png",
+      "/images/doa.png",
+      "/images/khutbah.png",
+      "/images/dalail.png",
+      "/images/tasbih.png",
+      "/images/burdah.png",
+      "/images/simt.png",
+      "/images/ma.png",
+    ];
+
     const preloadHomeAssets = () => {
-      const homeAssets = [
-        "/images/backgroundmain.png",
-
-        "/images/surah.png",
-        "/images/wirid.png",
-        "/images/doa.png",
-        "/images/khutbah.png",
-        "/images/dalail.png",
-        "/images/tasbih.png",
-        "/images/burdah.png",
-        "/images/simt.png",
-        "/images/ma.png",
-      ];
-
       let loadedCount = 0;
       const totalAssets = homeAssets.length;
 
@@ -76,9 +75,7 @@ const Index = () => {
           setProgress(currentProgress);
 
           if (loadedCount === totalAssets) {
-            setTimeout(() => {
-              setHomeReady(true);
-            }, 500);
+            setTimeout(() => setHomeReady(true), 500);
           }
         };
 
@@ -88,15 +85,18 @@ const Index = () => {
       });
     };
 
-    preloadHomeAssets();
+    // Tambahkan delay 1 detik sebelum memulai preload
+    const startDelay = setTimeout(() => {
+      preloadHomeAssets();
+    }, 1000);
+
+    return () => clearTimeout(startDelay);
   }, [splashRendered]);
 
+  // Navigate ke home
   useEffect(() => {
     if (homeReady) {
-      const timer = setTimeout(() => {
-        navigate("/home");
-      }, 200);
-
+      const timer = setTimeout(() => navigate("/home"), 200);
       return () => clearTimeout(timer);
     }
   }, [homeReady, navigate]);
@@ -125,7 +125,7 @@ const Index = () => {
         }}
       />
 
-      {/* Loading Bar */}
+      {/* Loading Bar: berjalan setelah 1 detik + splashRendered */}
       {splashRendered && <LoadingBar progress={progress} />}
     </div>
   );
