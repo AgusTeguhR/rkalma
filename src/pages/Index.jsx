@@ -19,7 +19,7 @@ const Index = () => {
 
     // Step 1: Preload gambar splash (boleh lambat, tidak masalah)
     const splashImg = new Image();
-    splashImg.src = "/images/splash.png";
+    splashImg.src = "/images/splash.webp";
 
     splashImg.onload = () => {
       console.log("Splash image loaded, waiting for full render...");
@@ -56,7 +56,7 @@ const Index = () => {
       // SEMUA gambar yang ada di halaman Home
       const homeAssets = [
         // Background home
-        "/images/backgroundmain.png",
+        "/images/backgroundmain.webp",
 
         // 9 menu items
         "/images/surah.png",
