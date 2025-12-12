@@ -168,25 +168,6 @@ const Index = () => {
           />
         </div>
       )}
-
-      {/* Progress percentage */}
-      {splashRendered && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "40px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            color: "#333",
-            fontSize: "0.9rem",
-            fontWeight: "600",
-            zIndex: 999,
-            textShadow: "0 1px 3px rgba(255,255,255,0.8)",
-          }}
-        >
-          {Math.round(progress)}%
-        </div>
-      )}
     </div>
   );
 };
