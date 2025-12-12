@@ -21,10 +21,10 @@ const Index = () => {
     // Step 1: Preload gambar splash
     const splashImg = new Image();
     splashImg.src = "/images/splash.png";
-    
+
     splashImg.onload = () => {
       setSplashLoaded(true);
-      
+
       // Tunggu gambar benar-benar ter-render di browser
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -55,7 +55,7 @@ const Index = () => {
       const homeAssets = [
         // Background home
         "/images/backgroundmain.png",
-        
+
         // 9 menu items
         "/images/surah.png",
         "/images/wirid.png",
@@ -76,7 +76,7 @@ const Index = () => {
       // Load setiap aset dan track progressnya secara REAL
       homeAssets.forEach((src) => {
         const img = new Image();
-        
+
         const handleLoad = (success = true) => {
           loadedCount++;
           const currentProgress = Math.round((loadedCount / totalAssets) * 100);
@@ -91,7 +91,7 @@ const Index = () => {
           // Jika semua aset sudah diproses (loaded atau error)
           if (loadedCount === totalAssets) {
             console.log("All assets processed!");
-            
+
             // Tunggu sebentar untuk memastikan browser sudah render semua
             setTimeout(() => {
               setHomeReady(true);
@@ -118,7 +118,7 @@ const Index = () => {
       const timer = setTimeout(() => {
         navigate("/home");
       }, 200);
-      
+
       return () => clearTimeout(timer);
     }
   }, [homeReady, navigate]);
@@ -170,25 +170,6 @@ const Index = () => {
               boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
             }}
           />
-        </div>
-      )}
-
-      {/* Progress percentage */}
-      {splashRendered && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "40px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            color: "#333",
-            fontSize: "0.9rem",
-            fontWeight: "600",
-            zIndex: 999,
-            textShadow: "0 1px 3px rgba(255,255,255,0.8)",
-          }}
-        >
-          {Math.round(progress)}%
         </div>
       )}
     </div>

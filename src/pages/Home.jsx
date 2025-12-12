@@ -60,7 +60,6 @@ const Home = () => {
         overflow: "hidden",
         position: "relative",
         opacity: isReady ? 1 : 0,
-        transition: "opacity 0.2s ease-in",
       }}
     >
       {/* KONTAINER-ALL */}
