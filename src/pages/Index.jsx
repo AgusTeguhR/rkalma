@@ -8,119 +8,79 @@ const Index = () => {
   const [progress, setProgress] = useState(0);
   const [homeReady, setHomeReady] = useState(false);
 
+  // Fix screen height
   useEffect(() => {
-    // Perbaikan tinggi layar (untuk mobile)
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     };
-
     setVH();
     window.addEventListener("resize", setVH);
+    return () => window.removeEventListener("resize", setVH);
+  }, []);
 
-    // Step 1: Preload gambar splash
+  // 1. Load gambar splash
+  useEffect(() => {
     const splashImg = new Image();
     splashImg.src = "/images/splash.png";
 
     splashImg.onload = () => {
       setSplashLoaded(true);
-
-      // Tunggu gambar benar-benar ter-render di browser
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            setSplashRendered(true);
-          }, 400); // 300ms transition + 100ms buffer
-        });
-      });
+      // Splash akan tampil di layar frame berikutnya
+      requestAnimationFrame(() => setSplashRendered(true));
     };
 
     splashImg.onerror = () => {
-      console.error("Splash image failed to load");
+      console.error("Splash failed to load");
       setSplashLoaded(true);
-      setTimeout(() => setSplashRendered(true), 100);
-    };
-
-    return () => {
-      window.removeEventListener("resize", setVH);
+      requestAnimationFrame(() => setSplashRendered(true));
     };
   }, []);
 
-  // Step 2: Preload SEMUA aset home setelah splash rendered
+  // 2. Baru mulai loading setelah splashRendered = true
   useEffect(() => {
     if (!splashRendered) return;
 
-    const preloadHomeAssets = () => {
-      // SEMUA gambar yang ada di halaman Home
-      const homeAssets = [
-        // Background home
-        "/images/backgroundmain.png",
+    const homeAssets = [
+      "/images/backgroundmain.png",
+      "/images/surah.png",
+      "/images/wirid.png",
+      "/images/doa.png",
+      "/images/khutbah.png",
+      "/images/dalail.png",
+      "/images/tasbih.png",
+      "/images/burdah.png",
+      "/images/simt.png",
+      "/images/ma.png",
+    ];
 
-        // 9 menu items
-        "/images/surah.png",
-        "/images/wirid.png",
-        "/images/doa.png",
-        "/images/khutbah.png",
-        "/images/dalail.png",
-        "/images/tasbih.png",
-        "/images/burdah.png",
-        "/images/simt.png",
-        "/images/ma.png",
-      ];
+    let loadedCount = 0;
+    const totalAssets = homeAssets.length;
 
-      let loadedCount = 0;
-      const totalAssets = homeAssets.length;
+    homeAssets.forEach((src) => {
+      const img = new Image();
 
-      console.log(`Starting to preload ${totalAssets} assets...`);
+      const handleDone = () => {
+        loadedCount++;
+        setProgress(Math.round((loadedCount / totalAssets) * 100));
 
-      // Load setiap aset dan track progressnya secara REAL
-      homeAssets.forEach((src) => {
-        const img = new Image();
+        if (loadedCount === totalAssets) {
+          setTimeout(() => setHomeReady(true), 400);
+        }
+      };
 
-        const handleLoad = (success = true) => {
-          loadedCount++;
-          const currentProgress = Math.round((loadedCount / totalAssets) * 100);
-          setProgress(currentProgress);
-
-          if (success) {
-            console.log(`✓ Loaded (${loadedCount}/${totalAssets}): ${src}`);
-          } else {
-            console.warn(`✗ Failed (${loadedCount}/${totalAssets}): ${src}`);
-          }
-
-          // Jika semua aset sudah diproses (loaded atau error)
-          if (loadedCount === totalAssets) {
-            console.log("All assets processed!");
-
-            // Tunggu sebentar untuk memastikan browser sudah render semua
-            setTimeout(() => {
-              setHomeReady(true);
-            }, 500);
-          }
-        };
-
-        img.onload = () => handleLoad(true);
-        img.onerror = () => {
-          handleLoad(false);
-        };
-
-        img.src = src;
-      });
-    };
-
-    preloadHomeAssets();
+      img.onload = handleDone;
+      img.onerror = handleDone;
+      img.src = src;
+    });
   }, [splashRendered]);
 
-  // Step 3: Navigate ke home setelah SEMUA aset ready
+  // 3. Redirect ke home ketika siap
   useEffect(() => {
-    if (homeReady) {
-      console.log("Navigating to home...");
-      const timer = setTimeout(() => {
-        navigate("/home");
-      }, 200);
+    if (!homeReady) return;
 
-      return () => clearTimeout(timer);
-    }
+    const t = setTimeout(() => navigate("/home"), 200);
+    return () => clearTimeout(t);
   }, [homeReady, navigate]);
 
   return (
@@ -134,20 +94,20 @@ const Index = () => {
         backgroundColor: "#fff",
       }}
     >
-      {/* Splash Background */}
+      {/* Splash tampil langsung */}
       <div
         style={{
           width: "100%",
           height: "100%",
-          backgroundImage: splashLoaded ? "url(/images/splash.png)" : "none",
+          backgroundImage: "url(/images/splash.png)",
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           opacity: splashLoaded ? 1 : 0,
-          transition: "opacity 0.3s ease-in",
+          transition: "opacity 0.25s ease-in",
         }}
       />
 
-      {/* Loading Top Bar */}
+      {/* Loading bar mulai SETELAH splashRendered = true */}
       {splashRendered && (
         <div
           style={{
@@ -156,9 +116,9 @@ const Index = () => {
             left: 0,
             right: 0,
             height: "3px",
-            backgroundColor: "rgba(255, 255, 255, 0.3)",
+            backgroundColor: "rgba(255,255,255,0.4)",
             overflow: "hidden",
-            zIndex: 1000,
+            zIndex: 999,
           }}
         >
           <div
@@ -167,7 +127,6 @@ const Index = () => {
               width: `${progress}%`,
               backgroundColor: "#4CAF50",
               transition: "width 0.3s ease-out",
-              boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
             }}
           />
         </div>
