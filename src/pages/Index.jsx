@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Index = () => {
+const Home = () => {
   const navigate = useNavigate();
-  const [splashLoaded, setSplashLoaded] = useState(false);
-  const [splashRendered, setSplashRendered] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [homeReady, setHomeReady] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Perbaikan tinggi layar (untuk mobile)
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -18,93 +15,38 @@ const Index = () => {
     setVH();
     window.addEventListener("resize", setVH);
 
-    // Step 1: Preload gambar splash
-    const splashImg = new Image();
-    splashImg.src = "/images/splash.png";
-    
-    splashImg.onload = () => {
-      // Gambar splash sudah loaded di memory
-      setSplashLoaded(true);
-      
-      // Step 2: Tunggu gambar benar-benar ter-render di browser
-      // Gunakan requestAnimationFrame untuk memastikan render selesai
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // Tunggu transisi opacity selesai (300ms) + buffer
-          setTimeout(() => {
-            setSplashRendered(true);
-          }, 400); // 300ms transition + 100ms buffer
-        });
-      });
-    };
+    // Set ready setelah component mount
+    // Karena semua gambar sudah di-preload di Index, ini akan instant
+    requestAnimationFrame(() => {
+      setIsReady(true);
+    });
 
-    splashImg.onerror = () => {
-      // Jika gambar gagal load, tetap lanjut
-      console.error("Splash image failed to load");
-      setSplashLoaded(true);
-      // Langsung set rendered jika error
-      setTimeout(() => setSplashRendered(true), 100);
-    };
-
-    return () => {
-      window.removeEventListener("resize", setVH);
-    };
+    return () => window.removeEventListener("resize", setVH);
   }, []);
 
-  // Step 3: Mulai loading HANYA setelah splash ter-render penuh
-  useEffect(() => {
-    if (!splashRendered) return;
+  // useMemo untuk menuItems agar tidak re-create setiap render
+  const menuItems = useMemo(
+    () => [
+      { img: "/images/surah.png", route: "/surah" },
+      { img: "/images/wirid.png", route: "/wirid" },
+      { img: "/images/doa.png", route: "/doa" },
+      { img: "/images/khutbah.png", route: "/khutbah" },
+      { img: "/images/dalail.png", route: "/dalail" },
+      { img: "/images/tasbih.png", route: "/tasbih" },
+      { img: "/images/burdah.png", route: "/burdah" },
+      { img: "/images/simt.png", route: "/simthud" },
+      { img: "/images/ma.png", route: "/maulid" },
+    ],
+    []
+  );
 
-    const startHomePreloading = () => {
-      // Simulasi preloading dengan progress
-      let currentProgress = 0;
-      const interval = setInterval(() => {
-        currentProgress += 2;
-        setProgress(currentProgress);
-
-        if (currentProgress >= 100) {
-          clearInterval(interval);
-          
-          // Tunggu sebentar untuk smooth transition
-          setTimeout(() => {
-            setHomeReady(true);
-          }, 300);
-        }
-      }, 30); // Total waktu: 30ms * 50 steps = 1.5 detik
-
-      // Preload aset-aset untuk halaman home
-      preloadHomeAssets();
-    };
-
-    const preloadHomeAssets = () => {
-      // Tambahkan semua gambar/aset yang ada di halaman home
-      const homeAssets = [
-        "/images/home-bg.png",
-        "/images/logo.png",
-        // Tambahkan semua aset lain yang ada di halaman home
-      ];
-
-      homeAssets.forEach(src => {
-        const img = new Image();
-        img.src = src;
-      });
-    };
-
-    // Panggil fungsi preloading
-    startHomePreloading();
-  }, [splashRendered]);
-
-  // Navigate ke home setelah semua siap
-  useEffect(() => {
-    if (homeReady) {
-      // Tambah delay kecil untuk memastikan transisi smooth
-      const timer = setTimeout(() => {
-        navigate("/home");
-      }, 200);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [homeReady, navigate]);
+  const handleClick = (route, index) => {
+    setActiveIndex(index);
+    setTimeout(() => {
+      setActiveIndex(null);
+      navigate(route);
+    }, 150);
+  };
 
   return (
     <div
@@ -112,67 +54,79 @@ const Index = () => {
       style={{
         width: "100vw",
         height: "calc(var(--vh, 1vh) * 100)",
-        position: "relative",
+        backgroundImage: "url(/images/backgroundmain.png)",
+        backgroundSize: "100% 100%",
+        backgroundRepeat: "no-repeat",
         overflow: "hidden",
-        backgroundColor: "#fff", // Fallback background
+        position: "relative",
+        opacity: isReady ? 1 : 0,
+        transition: "opacity 0.2s ease-in",
       }}
     >
-      {/* Splash Background */}
+      {/* KONTAINER-ALL */}
       <div
         style={{
+          position: "absolute",
+          bottom: "10%",
+          left: 0,
           width: "100%",
-          height: "100%",
-          backgroundImage: splashLoaded ? "url(/images/splash.png)" : "none",
-          backgroundSize: "100% 100%",
-          backgroundRepeat: "no-repeat",
-          opacity: splashLoaded ? 1 : 0,
-          transition: "opacity 0.3s ease-in",
+          height: "57%",
+          borderRadius: "20px 20px 0 0",
+          padding: "20px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          boxSizing: "border-box",
         }}
-      />
-
-      {/* Loading Top Bar - hanya muncul setelah splash ter-render PENUH */}
-      {splashRendered && (
+      >
+        {/* GRID WRAPPER */}
         <div
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "3px",
-            backgroundColor: "rgba(255, 255, 255, 0.3)",
-            overflow: "hidden",
-            zIndex: 1000,
+            width: "100%",
+            height: "100%",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateRows: "repeat(3, 1fr)",
+            gap: "5px",
           }}
         >
-          <div
-            style={{
-              height: "100%",
-              width: `${progress}%`,
-              backgroundColor: "#244502",
-              transition: "width 0.1s ease-out",
-              boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
-            }}
-          />
+          {menuItems.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => handleClick(item.route, index)}
+              style={{
+                cursor: "pointer",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+                transform: activeIndex === index ? "scale(1.05)" : "scale(1)",
+                transition: "transform 0.15s ease-out",
+                // Optimasi: akan-berubah untuk smooth animation
+                willChange: activeIndex === index ? "transform" : "auto",
+              }}
+            >
+              <img
+                src={item.img}
+                alt={`Menu ${index + 1}`}
+                loading="eager" // Prioritas tinggi karena sudah di-preload
+                style={{
+                  width: "80%",
+                  height: "83%",
+                  objectFit: "fill",
+                  borderRadius: "18%",
+                  // Optimasi: disable image dragging
+                  userSelect: "none",
+                  WebkitUserDrag: "none",
+                }}
+              />
+            </div>
+          ))}
         </div>
-      )}
-
-      {/* Progress percentage (opsional) */}
-      {splashRendered && (
-        <div style={{
-          position: "absolute",
-          bottom: "40px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          color: "#333",
-          fontSize: "0.9rem",
-          fontWeight: "500",
-          zIndex: 999
-        }}>
-          {Math.round(progress)}%
-        </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default Index;
+export default Home;
