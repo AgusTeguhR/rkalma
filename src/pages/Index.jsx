@@ -148,7 +148,7 @@ const Index = () => {
             style={{
               height: "100%",
               width: `${progress}%`,
-              backgroundColor: "#4CAF50",
+              backgroundColor: "#244502",
               transition: "width 0.1s ease-out",
               boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
             }}
