@@ -29,7 +29,7 @@ const Index = () => {
 
       const preloadTimer = setTimeout(() => {
         setPreloadReady(true);
-      }, 2000);
+      }, 500);
 
       return () => clearTimeout(preloadTimer);
     }
