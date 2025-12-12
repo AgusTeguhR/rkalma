@@ -5,7 +5,6 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // perbaikan tinggi layar (untuk mobile)
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -14,14 +13,18 @@ const Index = () => {
     setVH();
     window.addEventListener("resize", setVH);
 
-    // Auto navigate setelah splash
-    const timer = setTimeout(() => {
-      navigate("/home");
-    }, 2500); // lama splash screen
+    // Redirect setelah halaman benar-benar selesai loading
+    const handleLoad = () => {
+      setTimeout(() => {
+        navigate("/home");
+      }, 800); // delay kecil agar splash terlihat utuh
+    };
+
+    window.addEventListener("load", handleLoad);
 
     return () => {
       window.removeEventListener("resize", setVH);
-      clearTimeout(timer);
+      window.removeEventListener("load", handleLoad);
     };
   }, [navigate]);
 
