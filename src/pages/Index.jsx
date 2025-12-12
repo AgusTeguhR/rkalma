@@ -20,16 +20,18 @@ const Index = () => {
     // Step 1: Preload gambar splash (boleh lambat, tidak masalah)
     const splashImg = new Image();
     splashImg.src = "/images/splash.png";
-    
+
     splashImg.onload = () => {
       console.log("Splash image loaded, waiting for full render...");
-      
+
       // Tunggu lebih lama untuk memastikan splash benar-benar tampil sempurna di layar
       // Baru mulai loading home assets setelah splash 100% visible
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setTimeout(() => {
-            console.log("Splash fully rendered, starting home assets loading...");
+            console.log(
+              "Splash fully rendered, starting home assets loading..."
+            );
             setSplashRendered(true);
           }, 800); // Tunggu 800ms untuk memastikan image benar-benar penuh di layar
         });
@@ -55,7 +57,7 @@ const Index = () => {
       const homeAssets = [
         // Background home
         "/images/backgroundmain.png",
-        
+
         // 9 menu items
         "/images/surah.png",
         "/images/wirid.png",
@@ -71,12 +73,14 @@ const Index = () => {
       let loadedCount = 0;
       const totalAssets = homeAssets.length;
 
-      console.log(`✅ Splash fully visible! Starting home assets preload (${totalAssets} items)...`);
+      console.log(
+        `✅ Splash fully visible! Starting home assets preload (${totalAssets} items)...`
+      );
 
       // Load setiap aset dan track progressnya secara REAL
       homeAssets.forEach((src) => {
         const img = new Image();
-        
+
         const handleLoad = (success = true) => {
           loadedCount++;
           const currentProgress = Math.round((loadedCount / totalAssets) * 100);
@@ -91,7 +95,7 @@ const Index = () => {
           // Jika semua aset sudah diproses (loaded atau error)
           if (loadedCount === totalAssets) {
             console.log("All assets processed!");
-            
+
             // Tunggu sebentar untuk memastikan browser sudah render semua
             setTimeout(() => {
               setHomeReady(true);
@@ -118,7 +122,7 @@ const Index = () => {
       const timer = setTimeout(() => {
         navigate("/home");
       }, 200);
-      
+
       return () => clearTimeout(timer);
     }
   }, [homeReady, navigate]);
@@ -143,47 +147,45 @@ const Index = () => {
           backgroundColor: "#fff",
         }}
       >
-      {/* Splash Background - Tampil bertahap secara natural */}
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          backgroundImage: "url(/images/splash.png)",
-          backgroundSize: "100% 100%",
-          backgroundRepeat: "no-repeat",
-          backgroundColor: "#fff", // Background sementara saat loading
-        }}
-      />
-
-      {/* Loading Top Bar - HANYA muncul setelah splash tampil penuh */}
-      {splashRendered && (
+        {/* Splash Background - Tampil bertahap secara natural */}
         <div
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "3px",
-            backgroundColor: "rgba(255, 255, 255, 0.3)",
-            overflow: "hidden",
-            zIndex: 1000,
-            animation: "fadeIn 0.3s ease-in",
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url(/images/splash.png)",
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            backgroundColor: "#fff", // Background sementara saat loading
           }}
-        >
+        />
+
+        {/* Loading Top Bar - HANYA muncul setelah splash tampil penuh */}
+        {splashRendered && (
           <div
             style={{
-              height: "100%",
-              width: `${progress}%`,
-              backgroundColor: "#4CAF50",
-              transition: "width 0.3s ease-out",
-              boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "3px",
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              overflow: "hidden",
+              zIndex: 1000,
+              animation: "fadeIn 0.3s ease-in",
             }}
-          />
-        </div>
-      )}
-
-      {/* Progress percentage - Muncul bersamaan dengan loading bar */}
-            </div>
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${progress}%`,
+                backgroundColor: "#4CAF50",
+                transition: "width 0.3s ease-out",
+                boxShadow: "0 0 10px rgba(76, 175, 80, 0.8)",
+              }}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };
