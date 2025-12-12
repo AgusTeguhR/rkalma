@@ -1,46 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TopLoadingBar from "../components/TopLoadingBar";
+import Home from "./Home"; // preload komponen Home
 
 const Index = () => {
   const navigate = useNavigate();
+  const [loadingDone, setLoadingDone] = useState(false);
+  const [preloadReady, setPreloadReady] = useState(false);
 
+  // Preload halaman home
   useEffect(() => {
-    const setVH = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    };
+    // simulate preload
+    const preloadTimer = setTimeout(() => {
+      setPreloadReady(true);
+    }, 300); // preload komponen cepat
 
-    setVH();
-    window.addEventListener("resize", setVH);
+    return () => clearTimeout(preloadTimer);
+  }, []);
 
-    // Redirect setelah halaman benar-benar selesai loading
-    const handleLoad = () => {
-      setTimeout(() => {
-        navigate("/home");
-      }, 800); // delay kecil agar splash terlihat utuh
-    };
-
-    window.addEventListener("load", handleLoad);
-
-    return () => {
-      window.removeEventListener("resize", setVH);
-      window.removeEventListener("load", handleLoad);
-    };
-  }, [navigate]);
+  // Ketika loading bar selesai dan home siap → redirect
+  useEffect(() => {
+    if (loadingDone && preloadReady) {
+      navigate("/home");
+    }
+  }, [loadingDone, preloadReady, navigate]);
 
   return (
     <div
-      className="app-container"
       style={{
         width: "100vw",
-        height: "calc(var(--vh) * 100)",
+        height: "100vh",
         backgroundImage: "url(/images/splash.png)",
         backgroundSize: "100% 100%",
         backgroundRepeat: "no-repeat",
-        overflow: "hidden",
-        position: "relative",
       }}
-    ></div>
+    >
+      {/* Loading bar tampil di atas layar */}
+      <TopLoadingBar onDone={() => setLoadingDone(true)} />
+
+      {/* Render home secara diam-diam agar sudah siap sebelum ditampilkan */}
+      <div style={{ display: "none" }}>
+        <Home />
+      </div>
+    </div>
   );
 };
 
