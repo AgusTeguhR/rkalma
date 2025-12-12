@@ -1,24 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TopLoadingBar from "../components/TopLoadingBar";
-import Home from "./Home"; // preload komponen Home
+import Home from "./Home";
 
 const Index = () => {
   const navigate = useNavigate();
+
+  const [isSplashLoaded, setSplashLoaded] = useState(false);
   const [loadingDone, setLoadingDone] = useState(false);
   const [preloadReady, setPreloadReady] = useState(false);
+  const [startLoading, setStartLoading] = useState(false);
 
-  // Preload halaman home
+  // Pastikan gambar splash sudah benar-benar dimuat
   useEffect(() => {
-    // simulate preload
-    const preloadTimer = setTimeout(() => {
-      setPreloadReady(true);
-    }, 300); // preload komponen cepat
+    const img = new Image();
+    img.src = "/images/splash.png";
 
-    return () => clearTimeout(preloadTimer);
+    img.onload = () => {
+      setSplashLoaded(true); // halaman splash benar-benar sudah tampil penuh
+    };
   }, []);
 
-  // Ketika loading bar selesai dan home siap → redirect
+  // Setelah splash ter-render → mulai preload halaman HOME
+  useEffect(() => {
+    if (isSplashLoaded) {
+      // Mulai loading bar secara async agar tidak dianggap synchronous update
+      Promise.resolve().then(() => setStartLoading(true));
+
+      const preloadTimer = setTimeout(() => {
+        setPreloadReady(true);
+      }, 2000);
+
+      return () => clearTimeout(preloadTimer);
+    }
+  }, [isSplashLoaded]);
+
+  // Redirect ketika semuanya siap
   useEffect(() => {
     if (loadingDone && preloadReady) {
       navigate("/home");
@@ -35,10 +52,10 @@ const Index = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Loading bar tampil di atas layar */}
-      <TopLoadingBar onDone={() => setLoadingDone(true)} />
+      {/* Loading bar hanya muncul setelah splash sudah tampil FULL */}
+      {startLoading && <TopLoadingBar onDone={() => setLoadingDone(true)} />}
 
-      {/* Render home secara diam-diam agar sudah siap sebelum ditampilkan */}
+      {/* Preload halaman home agar ketika redirect masuk secara instan */}
       <div style={{ display: "none" }}>
         <Home />
       </div>
