@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [splashLoaded, setSplashLoaded] = useState(false);
   const [splashRendered, setSplashRendered] = useState(false);
   const [progress, setProgress] = useState(0);
   const [homeReady, setHomeReady] = useState(false);
@@ -18,27 +17,28 @@ const Index = () => {
     setVH();
     window.addEventListener("resize", setVH);
 
-    // Step 1: Preload gambar splash
+    // Step 1: Preload gambar splash (boleh lambat, tidak masalah)
     const splashImg = new Image();
     splashImg.src = "/images/splash.png";
     
     splashImg.onload = () => {
-      setSplashLoaded(true);
+      console.log("Splash image loaded, waiting for full render...");
       
-      // Tunggu gambar benar-benar ter-render di browser
+      // Tunggu lebih lama untuk memastikan splash benar-benar tampil sempurna di layar
+      // Baru mulai loading home assets setelah splash 100% visible
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setTimeout(() => {
+            console.log("Splash fully rendered, starting home assets loading...");
             setSplashRendered(true);
-          }, 400); // 300ms transition + 100ms buffer
+          }, 800); // Tunggu 800ms untuk memastikan image benar-benar penuh di layar
         });
       });
     };
 
     splashImg.onerror = () => {
       console.error("Splash image failed to load");
-      setSplashLoaded(true);
-      setTimeout(() => setSplashRendered(true), 100);
+      setTimeout(() => setSplashRendered(true), 200);
     };
 
     return () => {
@@ -46,7 +46,7 @@ const Index = () => {
     };
   }, []);
 
-  // Step 2: Preload SEMUA aset home setelah splash rendered
+  // Step 2: Preload SEMUA aset home HANYA setelah splash BENAR-BENAR tampil
   useEffect(() => {
     if (!splashRendered) return;
 
@@ -70,10 +70,8 @@ const Index = () => {
 
       let loadedCount = 0;
       const totalAssets = homeAssets.length;
-      // eslint-disable-next-line no-unused-vars
-      let hasError = false;
 
-      console.log(`Starting to preload ${totalAssets} assets...`);
+      console.log(`✅ Splash fully visible! Starting home assets preload (${totalAssets} items)...`);
 
       // Load setiap aset dan track progressnya secara REAL
       homeAssets.forEach((src) => {
@@ -103,7 +101,6 @@ const Index = () => {
 
         img.onload = () => handleLoad(true);
         img.onerror = () => {
-          hasError = true;
           handleLoad(false);
         };
 
@@ -127,30 +124,38 @@ const Index = () => {
   }, [homeReady, navigate]);
 
   return (
-    <div
-      className="app-container"
-      style={{
-        width: "100vw",
-        height: "calc(var(--vh, 1vh) * 100)",
-        position: "relative",
-        overflow: "hidden",
-        backgroundColor: "#fff",
-      }}
-    >
-      {/* Splash Background */}
+    <>
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+        `}
+      </style>
+      <div
+        className="app-container"
+        style={{
+          width: "100vw",
+          height: "calc(var(--vh, 1vh) * 100)",
+          position: "relative",
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        }}
+      >
+      {/* Splash Background - Tampil bertahap secara natural */}
       <div
         style={{
           width: "100%",
           height: "100%",
-          backgroundImage: splashLoaded ? "url(/images/splash.png)" : "none",
+          backgroundImage: "url(/images/splash.png)",
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
-          opacity: splashLoaded ? 1 : 0,
-          transition: "opacity 0.3s ease-in",
+          backgroundColor: "#fff", // Background sementara saat loading
         }}
       />
 
-      {/* Loading Top Bar */}
+      {/* Loading Top Bar - HANYA muncul setelah splash tampil penuh */}
       {splashRendered && (
         <div
           style={{
@@ -162,6 +167,7 @@ const Index = () => {
             backgroundColor: "rgba(255, 255, 255, 0.3)",
             overflow: "hidden",
             zIndex: 1000,
+            animation: "fadeIn 0.3s ease-in",
           }}
         >
           <div
@@ -176,7 +182,7 @@ const Index = () => {
         </div>
       )}
 
-      {/* Progress percentage */}
+      {/* Progress percentage - Muncul bersamaan dengan loading bar */}
       {splashRendered && (
         <div
           style={{
@@ -189,12 +195,14 @@ const Index = () => {
             fontWeight: "600",
             zIndex: 999,
             textShadow: "0 1px 3px rgba(255,255,255,0.8)",
+            animation: "fadeIn 0.3s ease-in",
           }}
         >
           {Math.round(progress)}%
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
