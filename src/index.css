@@ -15,6 +15,7 @@ html, body {
 /* Container aplikasi (untuk format mobile 9:16) */
 .app-container {
   width: 100%;
+  max-width: 420px;
   aspect-ratio: 9 / 16;
   margin: 0 auto;
   background-color: transparent;
