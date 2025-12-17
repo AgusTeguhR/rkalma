@@ -7,10 +7,8 @@ const Wirid = () => {
   const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
 
-  const filteredWirid = wiridList.filter(
-    (s) =>
-      s.name.toLowerCase().includes(keyword.toLowerCase()) ||
-      s.arab.toLowerCase().includes(keyword.toLowerCase())
+  const filteredWirid = wiridList.filter((w) =>
+    w.name.toLowerCase().includes(keyword.toLowerCase())
   );
 
   return (
@@ -20,6 +18,7 @@ const Wirid = () => {
         width: "100%",
         margin: "0 auto",
         paddingTop: HEADER_HEIGHT,
+        paddingBottom: HEADER_HEIGHT,
         height: "100vh",
         overflowY: "auto",
         overflowX: "hidden",
@@ -28,9 +27,9 @@ const Wirid = () => {
       <Header title="Wirid" onSearchChange={setKeyword} />
 
       <ul style={{ listStyle: "none", padding: 0, marginTop: "10px" }}>
-        {filteredWirid.map((s) => (
+        {filteredWirid.map((w) => (
           <li
-            key={s.name}
+            key={w.name}
             style={{
               padding: "12px 16px",
               marginBottom: "10px",
@@ -43,8 +42,8 @@ const Wirid = () => {
             onClick={() =>
               navigate(
                 `/ayat/wirid/${encodeURIComponent(
-                  s.name
-                )}?name=${encodeURIComponent(s.name)}`
+                  w.name
+                )}?name=${encodeURIComponent(w.name)}`
               )
             }
           >
@@ -56,7 +55,7 @@ const Wirid = () => {
                 color: "#222",
               }}
             >
-              {s.name}
+              {w.name}
             </div>
           </li>
         ))}

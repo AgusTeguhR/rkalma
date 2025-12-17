@@ -1,13 +1,17 @@
-import React from 'react'
-import Header from '../components/Header'
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Maulid = () => {
-  return (
-    <div>
-      <Header title="Maulid Azab" />
-      Maulid Azab (soon)
-    </div>
-  )
-}
+  const navigate = useNavigate();
 
-export default Maulid
+  useEffect(() => {
+    navigate(
+      "/ayat/maulid/Maulid_Azab?name=Maulid%20Azab",
+      { replace: true }
+    );
+  }, [navigate]);
+
+  return null;
+};
+
+export default Maulid;
