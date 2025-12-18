@@ -1,5 +1,5 @@
-/* eslint-disable no-empty */
-import React, { useRef, useEffect } from "react";
+ 
+import React, { useRef, useEffect, useState } from "react";
 import Header, { HEADER_HEIGHT } from "../components/Header";
 import { useParams, useLocation } from "react-router-dom";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
@@ -17,6 +17,9 @@ const Ayat = () => {
 
   const containerRef = useRef(null);
   const zoomTargetRef = useRef(null);
+
+  // State untuk error handling
+  const [error, setError] = useState(null);
 
   // SCALE disimpan dalam ref (ANTI FLICKER)
   const baseScaleRef = useRef(1);
@@ -53,7 +56,11 @@ const Ayat = () => {
     container.style.touchAction = "none";
 
     const onPointerDown = (ev) => {
-      container.setPointerCapture(ev.pointerId);
+      try {
+        container.setPointerCapture(ev.pointerId);
+      } catch (e) {
+        console.warn("setPointerCapture failed:", e);
+      }
 
       pointersRef.current.set(ev.pointerId, {
         x: ev.clientX,
@@ -138,26 +145,33 @@ const Ayat = () => {
         p.prevY = p.y;
       }
 
-      // commit latest scale
-      const transform = window.getComputedStyle(target).transform;
-      if (transform !== "none") {
-        const match = transform.match(/matrix\(([^,]+),/);
-        if (match) {
-          const appliedScale = parseFloat(match[1]);
-          if (!Number.isNaN(appliedScale)) {
-            baseScaleRef.current = appliedScale;
+      // Commit latest scale - hanya jika masih ada transform
+      if (pointersRef.current.size === 0) {
+        const transform = window.getComputedStyle(target).transform;
+        if (transform !== "none") {
+          const match = transform.match(/matrix\(([^,]+),/);
+          if (match) {
+            const appliedScale = parseFloat(match[1]);
+            if (!Number.isNaN(appliedScale)) {
+              baseScaleRef.current = appliedScale;
+            }
           }
         }
       }
 
-      initialPinchDistRef.current = null;
-      pinchMidClientRef.current = null;
-      pinchMidContentRef.current = null;
+      // Reset pinch refs jika tidak ada pointer lagi
+      if (pointersRef.current.size < 2) {
+        initialPinchDistRef.current = null;
+        pinchMidClientRef.current = null;
+        pinchMidContentRef.current = null;
+      }
 
       try {
         container.releasePointerCapture(ev.pointerId);
-        // eslint-disable-next-line no-unused-vars
-      } catch (e) {}
+      // eslint-disable-next-line no-unused-vars
+      } catch (e) {
+        // Silent fail - normal jika capture sudah dirilis
+      }
     };
 
     const onWheel = (ev) => {
@@ -206,15 +220,13 @@ const Ayat = () => {
       container.removeEventListener("pointercancel", onPointerUp);
       container.removeEventListener("wheel", onWheel);
     };
-  }, []);
+  }, [MIN_SCALE, MAX_SCALE, SCALE_STEP]);
 
   // -------------------- PDF PATH --------------------
   const safeFolder = encodeURIComponent(folder || "");
   const safeId = encodeURIComponent(id || "");
   const fileUrl = `/${safeFolder}/${safeId}.pdf`;
 
-  const headerPx =
-    typeof HEADER_HEIGHT === "number" ? `${HEADER_HEIGHT}px` : HEADER_HEIGHT;
 
   return (
     <div
@@ -222,8 +234,8 @@ const Ayat = () => {
       style={{
         width: "100%",
         margin: "0 auto",
+        height: "100vh",
         paddingTop: HEADER_HEIGHT,
-        height: `calc(100vh - ${headerPx})`,
         display: "flex",
         flexDirection: "column",
         background: "#fff",
@@ -250,14 +262,37 @@ const Ayat = () => {
             transformOrigin: "0 0",
           }}
         >
-          <Worker
-            workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.js`}
-          >
-            <Viewer
-              fileUrl={fileUrl}
-              defaultScale={SpecialZoomLevel.PageWidth}
-            />
-          </Worker>
+          {error ? (
+            <div
+              style={{
+                padding: "40px 20px",
+                textAlign: "center",
+                color: "#dc2626",
+                fontSize: "16px",
+              }}
+            >
+              <div style={{ marginBottom: "10px", fontSize: "48px" }}>⚠️</div>
+              <div style={{ fontWeight: "600", marginBottom: "8px" }}>
+                {error}
+              </div>
+              <div style={{ fontSize: "14px", color: "#666" }}>
+                Silakan periksa koneksi internet atau coba muat ulang halaman.
+              </div>
+            </div>
+          ) : (
+            <Worker
+              workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.js`}
+            >
+              <Viewer
+                fileUrl={fileUrl}
+                defaultScale={SpecialZoomLevel.PageWidth}
+                onDocumentLoadFail={(e) => {
+                  console.error("PDF gagal dimuat:", e);
+                  setError("PDF tidak dapat dimuat");
+                }}
+              />
+            </Worker>
+          )}
         </div>
       </div>
     </div>
