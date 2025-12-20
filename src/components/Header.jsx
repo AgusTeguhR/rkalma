@@ -1,8 +1,16 @@
 import React from "react";
+import OfflineDownloader from "./OfflineDownloader";
 
 export const HEADER_HEIGHT = 50;
 
 const Header = ({ title, onSearchChange }) => {
+  // 🔽 DAFTAR FILE OFFLINE (NANTI BISA AUTO-GENERATE)
+  const fileList = [
+    "/surah/Al-Kahfi.pdf",
+    "/surah/Al-Baqarah.pdf",
+    // tambah PDF / image / font lain di sini
+  ];
+
   return (
     <header
       style={{
@@ -21,6 +29,7 @@ const Header = ({ title, onSearchChange }) => {
         padding: "0 12px",
       }}
     >
+      {/* ⬅ Back Button */}
       <button
         onClick={() => window.history.back()}
         style={{
@@ -37,20 +46,23 @@ const Header = ({ title, onSearchChange }) => {
         ←
       </button>
 
-      {/* Title */}
+      {/* 🏷️ Title */}
       <div
         style={{
           marginLeft: "8px",
           fontSize: "19px",
-          fontWeight:"bold",
+          fontWeight: "bold",
           color: "#ffffff",
           flex: 1,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
         }}
       >
         {title}
       </div>
 
-      {/* Search bar (lebih kanan + lebih proporsional) */}
+      {/* 🔍 Search Bar */}
       {onSearchChange ? (
         <input
           type="text"
@@ -65,13 +77,16 @@ const Header = ({ title, onSearchChange }) => {
             width: "120px",
             background: "#ffffff",
             color: "#000",
-            marginRight: "5px", // ⬅ GESER KE KIRI
-            transform: "translateX(-4px)", // ⬅ sedikit rapikan
+            marginRight: "6px",
+            transform: "translateX(-4px)",
           }}
         />
       ) : (
         <div style={{ width: "110px" }} />
       )}
+
+      {/* ⬇️ Offline Downloader */}
+      <OfflineDownloader fileList={fileList} />
     </header>
   );
 };
