@@ -54,7 +54,7 @@ const Home = () => {
       style={{
         width: "100vw",
         height: "calc(var(--vh, 1vh) * 100)",
-        backgroundImage: "url(/images/backgroundmain.webp)",
+        backgroundImage: "url(/images/bghome.jpg)",
         backgroundSize: "100% 100%",
         backgroundRepeat: "no-repeat",
         overflow: "hidden",

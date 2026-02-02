@@ -19,7 +19,7 @@ const Index = () => {
     window.addEventListener("resize", setVH);
 
     const splashImg = new Image();
-    splashImg.src = "/images/splash.webp";
+    splashImg.src = "/images/bgsplash.jpg";
 
     splashImg.onload = () => {
       setSplashLoaded(true);
