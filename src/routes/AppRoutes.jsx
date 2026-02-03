@@ -10,6 +10,7 @@ import Burdah from "../pages/Burdah";
 import Simthud from "../pages/Simthud";
 import Maulid from "../pages/Maulid";
 import Ayat from "../pages/Ayat";
+import Tes from "../pages/Tes";
 import Index from "../pages/Index";
 
 export default function AppRoutes() {
@@ -27,6 +28,7 @@ export default function AppRoutes() {
         <Route path="/burdah" element={<Burdah />} />
         <Route path="/simthud" element={<Simthud />} />
         <Route path="/maulid" element={<Maulid />} />
+        <Route path="/tes" element={<Tes />} />
         <Route path="/ayat/:folder/:id" element={<Ayat />} />
       </Routes>
     </BrowserRouter>
