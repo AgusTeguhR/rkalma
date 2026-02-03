@@ -13,7 +13,7 @@ export const khutbahList =[
     {name : "Khutbah Kedua"},
     {name : "Sholat Hari Raya"},
     {name : "Sholat Gerhana"},
-    {name : "Sholat Istiqa"},
+    {name : "Sholat Istisqa"},
     {name : "Khutbah Nikah"},
     {name : "Shigat Nikah"},
     {name : "Shigat Akad Nikah Dari Wakil"},
