@@ -19,7 +19,7 @@ const Index = () => {
     window.addEventListener("resize", setVH);
 
     const splashImg = new Image();
-    splashImg.src = "/images/bgsplash.jpg";
+    splashImg.src = "/images/bgsplash.webp";
 
     splashImg.onload = () => {
       setSplashLoaded(true);
@@ -46,7 +46,7 @@ const Index = () => {
     if (!splashRendered) return;
 
     const homeAssets = [
-      "/images/backgroundmain.webp",
+      "/images/bghome.webp",
       "/images/surah.png",
       "/images/wirid.png",
       "/images/doa.png",
@@ -80,7 +80,7 @@ const Index = () => {
 
   useEffect(() => {
     if (homeReady) {
-      const timer = setTimeout(() => navigate("/home"), 200);
+      const timer = setTimeout(() => navigate("/home", { replace: true }), 200);
       return () => clearTimeout(timer);
     }
   }, [homeReady, navigate]);
@@ -100,7 +100,7 @@ const Index = () => {
         style={{
           width: "100%",
           height: "100%",
-          backgroundImage: splashLoaded ? "url(/images/splash.webp)" : "none",
+          backgroundImage: splashLoaded ? "url(/images/bgsplash.webp)" : "none",
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           opacity: splashLoaded ? 1 : 0,

@@ -44,7 +44,7 @@ const Tasbih = () => {
           width: "100%",
           height: `calc((var(--vh) * 100) - ${HEADER_HEIGHT}px)`,
           marginTop: `${HEADER_HEIGHT}px`,
-          backgroundImage: "url(/images/backgroundtasbih.png)",
+          backgroundImage: "url(/images/backgroundtasbih.webp)",
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center top",
