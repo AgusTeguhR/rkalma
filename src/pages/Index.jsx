@@ -29,7 +29,7 @@ const Index = () => {
           // Jeda 1.5 detik sebelum loading dimulai
           setTimeout(() => {
             setSplashRendered(true);
-          }, 1500);
+          }, 1000);
         });
       });
     };
