@@ -26,9 +26,10 @@ const Index = () => {
 
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          // Jeda 1.5 detik sebelum loading dimulai
           setTimeout(() => {
             setSplashRendered(true);
-          }, 400);
+          }, 1500);
         });
       });
     };
@@ -68,7 +69,8 @@ const Index = () => {
         setProgress(Math.round((loadedCount / homeAssets.length) * 100));
 
         if (loadedCount === homeAssets.length) {
-          setTimeout(() => setHomeReady(true), 500);
+          // Jeda 1 detik setelah loading selesai (100%)
+          setTimeout(() => setHomeReady(true), 1000);
         }
       };
 
@@ -80,7 +82,8 @@ const Index = () => {
 
   useEffect(() => {
     if (homeReady) {
-      const timer = setTimeout(() => navigate("/home", { replace: true }), 200);
+      // Jeda sebentar sebelum navigasi untuk transisi yang smooth
+      const timer = setTimeout(() => navigate("/home", { replace: true }), 500);
       return () => clearTimeout(timer);
     }
   }, [homeReady, navigate]);
@@ -104,7 +107,7 @@ const Index = () => {
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           opacity: splashLoaded ? 1 : 0,
-          transition: "opacity 0.3s ease-in",
+          transition: "opacity 0.5s ease-in",
         }}
       />
 
