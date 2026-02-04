@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Surah from "../pages/Surah";
 import Wirid from "../pages/Wirid";
@@ -15,14 +15,14 @@ import Index from "../pages/Index";
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
-        <Route path="/" element={<Index/>} />
+        <Route path="/" element={<Index />} />
         <Route path="/home" element={<Home />} />
         <Route path="/surah" element={<Surah />} />
         <Route path="/wirid" element={<Wirid />} />
         <Route path="/doa" element={<Doa />} />
-        <Route path="/khutbah" element={<Khutbah/>} />
+        <Route path="/khutbah" element={<Khutbah />} />
         <Route path="/dalail" element={<Dalail />} />
         <Route path="/tasbih" element={<Tasbih />} />
         <Route path="/burdah" element={<Burdah />} />
@@ -31,6 +31,6 @@ export default function AppRoutes() {
         <Route path="/tes" element={<Tes />} />
         <Route path="/ayat/:folder/:id" element={<Ayat />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
